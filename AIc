@@ -1,0 +1,52 @@
+from bs4 import BeautifulSoup
+
+# Assuming doc.page_content is the raw HTML
+raw_html = doc.page_content
+soup = BeautifulSoup(raw_html, 'html.parser')
+
+# Extracting text content
+clean_text = soup.get_text(separator='\n')
+
+print(clean_text)
+
+
+
+
+
+
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+
+# Assuming you have a list of text chunks (docs) to embed
+embeddings = OpenAIEmbeddings()
+
+# Create and store embeddings in a FAISS vector store
+vector_store = FAISS.from_documents(docs, embeddings)
+
+# Save the vector store to disk
+vector_store.save_local("vector_store_path")
+
+
+
+
+
+
+
+
+from flask import Flask, request, jsonify
+from langchain.vectorstores import FAISS
+from langchain.embeddings import OpenAIEmbeddings
+
+app = Flask(__name__)
+
+# Load the vector store
+vector_store = FAISS.load_local("vector_store_path", OpenAIEmbeddings())
+
+@app.route('/ask', methods=['POST'])
+def ask():
+    query = request.json.get("query")
+    results = vector_store.similarity_search(query)
+    return jsonify(results)
+
+if __name__ == '__main__':
+    app.run(debug=True)

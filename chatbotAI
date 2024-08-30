@@ -1,0 +1,23 @@
+from langchain.document_loaders import WebBaseLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# URL of the page to extract data from
+url = "https://brainlox.com/courses/category/technical"
+
+# Create a WebBaseLoader instance
+loader = WebBaseLoader(url)
+
+# Load the documents from the URL
+documents = loader.load()
+
+# Optionally, you can split the text into smaller chunks
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+docs = text_splitter.split_documents(documents)
+
+# Display the extracted data
+for doc in docs:
+    print(doc.page_content)
+
+
+
+
